@@ -18,4 +18,29 @@ router.route('/add').post((req, res) => {
         .catch(err => res.status(404).json('error'+err))
 });
 
-module.exports = router;
+router.route('/:id').get((req, res) =>{
+    taskSchema.findById(req.params.id)  
+        .then(task => res.json(task))
+        .catch(err => res.status(400).json('Error='+err));
+});
+
+router.route('/:id').post((req, res) => {
+    taskSchema.findById(req.params.id)
+        .then(task => {
+            task.taskname = req.body.taskname;
+            task.taskDuration = req.body.taskDuration;
+            task.taskSchema = req.body.taskSchema;
+            task.task_description = req.body.task_description;
+            task.save()
+                .then(task => res.json('task updated'))
+                .catch(err => res.status(404).json('Error = '+err));
+        })
+        .catch(err => res.status(404).json("Error = "+err));
+});
+router.route('/:id').delete((req, res) => {
+    taskSchema.findByIdAndDelete(req.params.id)
+        .then(() => res.json("task deleted"))
+        .catch(err => res.status(404).json("Error = "+err));
+});
+
+module.exports = router;    
